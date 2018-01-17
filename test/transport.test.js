@@ -5,7 +5,6 @@
 const chai = require('chai');
 const dirtyChai = require('dirty-chai');
 const sinon = require('sinon');
-const Promise = require('bluebird');
 const PostmasterGeneral = require('../index');
 const defaults = require('../defaults.json');
 
