@@ -18,6 +18,10 @@
   },
   "homepage": "https://github.com/darklordzw/postmaster-general-core#readme",
   "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
   "files": [
     "index.js",
     "defaults.json",
