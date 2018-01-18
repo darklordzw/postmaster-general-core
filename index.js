@@ -5,8 +5,8 @@
  * @module index
  */
 
-const errors = require('.lib/errors');
-const Transport = require('.lib/transport');
+const errors = require('./lib/errors');
+const Transport = require('./lib/transport');
 
 module.exports = {
 	/** Errors module. */
