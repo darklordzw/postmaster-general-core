@@ -197,7 +197,7 @@ describe('transport:', () => {
 		});
 		it('should catch invalid routingKey params', () => {
 			const transport = new Transport();
-			return transport.publish(35353535)
+			return transport.removeListener(35353535)
 				.then(() => {
 					throw new Error('Failed to catch invalid input.');
 				})
