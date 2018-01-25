@@ -86,16 +86,16 @@ describe('transport:', () => {
 		});
 	});
 
-	describe('addListener:', () => {
+	describe('addMessageListener:', () => {
 		it('should return a promise that resolves', () => {
 			const transport = new Transport();
-			return transport.addListener('bob', () => {
+			return transport.addMessageListener('bob', () => {
 				return Promise.resolve();
 			});
 		});
 		it('should catch invalid routingKey params', () => {
 			const transport = new Transport();
-			return transport.addListener(44444, () => {
+			return transport.addMessageListener(44444, () => {
 				return Promise.resolve();
 			})
 				.then(() => {
@@ -109,7 +109,7 @@ describe('transport:', () => {
 		});
 		it('should catch invalid callback params', () => {
 			const transport = new Transport();
-			return transport.addListener('bob')
+			return transport.addMessageListener('bob')
 				.then(() => {
 					throw new Error('Failed to catch invalid input.');
 				})
@@ -125,7 +125,7 @@ describe('transport:', () => {
 				return Promise.resolve();
 			});
 			const spy2 = sinon.spy(transport, 'recordTiming');
-			return transport.addListener('bob', spy)
+			return transport.addMessageListener('bob', spy)
 				.then((handler) => handler({ test: true }))
 				.then((handler) => {
 					spy.calledOnce.should.be.true();
@@ -134,7 +134,7 @@ describe('transport:', () => {
 					spy.reset();
 					spy2.reset();
 				})
-				.then(() => transport.addListener('bob2', spy))
+				.then(() => transport.addMessageListener('bob2', spy))
 				.then((handler) => handler({ test: true, correlationId: 'ggg', initiator: 'fff' }))
 				.then((handler) => {
 					spy.calledOnce.should.be.true();
@@ -176,7 +176,7 @@ describe('transport:', () => {
 	describe('resetTimings:', () => {
 		it('should reset the timings', () => {
 			const transport = new Transport();
-			return transport.addListener('bob', () => {
+			return transport.addMessageListener('bob', () => {
 				return Promise.resolve();
 			})
 				.then(() => transport.recordTiming('bob', new Date().getTime()))
@@ -190,14 +190,14 @@ describe('transport:', () => {
 		});
 	});
 
-	describe('removeListener:', () => {
+	describe('removeMessageListener:', () => {
 		it('should return a promise that resolves', () => {
 			const transport = new Transport();
-			return transport.removeListener('bob');
+			return transport.removeMessageListener('bob');
 		});
 		it('should catch invalid routingKey params', () => {
 			const transport = new Transport();
-			return transport.removeListener(35353535)
+			return transport.removeMessageListener(35353535)
 				.then(() => {
 					throw new Error('Failed to catch invalid input.');
 				})
@@ -209,14 +209,14 @@ describe('transport:', () => {
 		});
 		it('should remove timing data for the listener', () => {
 			const transport = new Transport();
-			return transport.addListener('bob', () => {
+			return transport.addMessageListener('bob', () => {
 				return Promise.resolve();
 			})
 				.then(() => transport.recordTiming('bob', new Date().getTime()))
 				.then(() => {
 					expect(transport.timings.bob).to.exist();
 				})
-				.then(() => transport.removeListener('bob'))
+				.then(() => transport.removeMessageListener('bob'))
 				.then(() => {
 					expect(transport.timings.bob).to.not.exist();
 				});
