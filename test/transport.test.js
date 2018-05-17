@@ -31,11 +31,11 @@ describe('transport:', () => {
 	describe('constructor:', () => {
 		it('should properly initialize settings from defaults', () => {
 			const transport = new Transport();
-			transport.timingsResetInterval.should.equal(defaults.timingsResetInterval);
+			transport._timingsResetInterval.should.equal(defaults.timingsResetInterval);
 		});
 		it('should properly initialize settings from input', () => {
 			const transport = new Transport({ timingsResetInterval: 100 });
-			transport.timingsResetInterval.should.equal(100);
+			transport._timingsResetInterval.should.equal(100);
 		});
 		it('should error on invalid input', () => {
 			try {
@@ -61,7 +61,7 @@ describe('transport:', () => {
 		});
 		it('should cleanup resources', () => {
 			const transport = new Transport();
-			transport.listening = true;
+			transport._listening = true;
 			return transport.disconnect()
 				.then(() => {
 					transport.listening.should.be.false();
@@ -118,7 +118,7 @@ describe('transport:', () => {
 		it('should register a callback with appropriate params', () => {
 			const transport = new Transport();
 			const spy = sinon.spy(async () => {});
-			const spy2 = sinon.spy(transport, 'recordTiming');
+			const spy2 = sinon.spy(transport, '_recordTiming');
 			return transport.addMessageListener('bob', spy)
 				.then((handler) => handler({ test: true }))
 				.then((handler) => {
@@ -138,11 +138,11 @@ describe('transport:', () => {
 		});
 	});
 
-	describe('recordTiming:', () => {
+	describe('_recordTiming:', () => {
 		it('should catch invalid topic input', () => {
 			try {
 				const transport = new Transport();
-				transport.recordTiming(3353553, new Date().getTime());
+				transport._recordTiming(3353553, new Date().getTime());
 			} catch (err) {
 				return;
 			}
@@ -151,7 +151,7 @@ describe('transport:', () => {
 		it('should catch invalid start input', () => {
 			try {
 				const transport = new Transport();
-				transport.recordTiming('bob', 'invalid');
+				transport._recordTiming('bob', 'invalid');
 			} catch (err) {
 				return;
 			}
@@ -159,7 +159,7 @@ describe('transport:', () => {
 		});
 		it('should calculate the timing stats', () => {
 			const transport = new Transport();
-			transport.recordTiming('bob', new Date().getTime());
+			transport._recordTiming('bob', new Date().getTime());
 			expect(transport.timings.bob).to.exist();
 			transport.timings.bob.messageCount.should.equal(1);
 			transport.timings.bob.minElapsedTime.should.equal(transport.timings.bob.elapsedTime);
@@ -167,15 +167,15 @@ describe('transport:', () => {
 		});
 	});
 
-	describe('resetTimings:', () => {
+	describe('_resetTimings:', () => {
 		it('should reset the timings', () => {
 			const transport = new Transport();
 			return transport.addMessageListener('bob', async () => {})
-				.then(() => transport.recordTiming('bob', new Date().getTime()))
+				.then(() => transport._recordTiming('bob', new Date().getTime()))
 				.then(() => {
 					expect(transport.timings.bob).to.exist();
 				})
-				.then(() => transport.resetTimings())
+				.then(() => transport._resetTimings())
 				.then(() => {
 					expect(transport.timings.bob).to.not.exist();
 				});
