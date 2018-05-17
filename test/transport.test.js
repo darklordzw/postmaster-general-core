@@ -1,10 +1,9 @@
-﻿/* eslint import/no-unassigned-import: 'off' */
+/* eslint import/no-unassigned-import: 'off' */
 /* eslint no-unused-vars: 'off' */
 'use strict';
 
 const chai = require('chai');
 const dirtyChai = require('dirty-chai');
-const Promise = require('bluebird');
 const sinon = require('sinon');
 const Transport = require('../lib/transport');
 const defaults = require('../defaults.json');
@@ -14,7 +13,7 @@ initialize their respective assertion properties. The "use()" functions
 load plugins into Chai. "dirtyChai" just allows assertion properties to
 use function call syntax ("calledOnce()" vs "calledOnce"). It makes them more
 acceptable to the linter. */
-const expect = chai.expect;
+const { expect } = chai;
 chai.should();
 chai.use(dirtyChai);
 
@@ -90,15 +89,11 @@ describe('transport:', () => {
 	describe('addMessageListener:', () => {
 		it('should return a promise that resolves', () => {
 			const transport = new Transport();
-			return transport.addMessageListener('bob', () => {
-				return Promise.resolve();
-			});
+			return transport.addMessageListener('bob', async () => {});
 		});
 		it('should catch invalid routingKey params', () => {
 			const transport = new Transport();
-			return transport.addMessageListener(44444, () => {
-				return Promise.resolve();
-			})
+			return transport.addMessageListener(44444, async () => {})
 				.then(() => {
 					throw new Error('Failed to catch invalid input.');
 				})
@@ -122,9 +117,7 @@ describe('transport:', () => {
 		});
 		it('should register a callback with appropriate params', () => {
 			const transport = new Transport();
-			const spy = sinon.spy(() => {
-				return Promise.resolve();
-			});
+			const spy = sinon.spy(async () => {});
 			const spy2 = sinon.spy(transport, 'recordTiming');
 			return transport.addMessageListener('bob', spy)
 				.then((handler) => handler({ test: true }))
@@ -132,8 +125,8 @@ describe('transport:', () => {
 					spy.calledOnce.should.be.true();
 					spy.calledWith({ test: true }).should.be.true();
 					spy2.calledOnce.should.be.true();
-					spy.reset();
-					spy2.reset();
+					spy.resetHistory();
+					spy2.resetHistory();
 				})
 				.then(() => transport.addMessageListener('bob2', spy))
 				.then((handler) => handler({ test: true, correlationId: 'ggg', initiator: 'fff' }))
@@ -177,47 +170,12 @@ describe('transport:', () => {
 	describe('resetTimings:', () => {
 		it('should reset the timings', () => {
 			const transport = new Transport();
-			return transport.addMessageListener('bob', () => {
-				return Promise.resolve();
-			})
+			return transport.addMessageListener('bob', async () => {})
 				.then(() => transport.recordTiming('bob', new Date().getTime()))
 				.then(() => {
 					expect(transport.timings.bob).to.exist();
 				})
 				.then(() => transport.resetTimings())
-				.then(() => {
-					expect(transport.timings.bob).to.not.exist();
-				});
-		});
-	});
-
-	describe('removeMessageListener:', () => {
-		it('should return a promise that resolves', () => {
-			const transport = new Transport();
-			return transport.removeMessageListener('bob');
-		});
-		it('should catch invalid routingKey params', () => {
-			const transport = new Transport();
-			return transport.removeMessageListener(35353535)
-				.then(() => {
-					throw new Error('Failed to catch invalid input.');
-				})
-				.catch((err) => {
-					if (!(err instanceof TypeError)) {
-						throw err;
-					}
-				});
-		});
-		it('should remove timing data for the listener', () => {
-			const transport = new Transport();
-			return transport.addMessageListener('bob', () => {
-				return Promise.resolve();
-			})
-				.then(() => transport.recordTiming('bob', new Date().getTime()))
-				.then(() => {
-					expect(transport.timings.bob).to.exist();
-				})
-				.then(() => transport.removeMessageListener('bob'))
 				.then(() => {
 					expect(transport.timings.bob).to.not.exist();
 				});
