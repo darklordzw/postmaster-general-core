@@ -136,6 +136,25 @@ describe('transport:', () => {
 					spy.calledWith({ test: true, correlationId: 'ggg', initiator: 'fff' }).should.be.true();
 				});
 		});
+		it('should automatically log any errors within the callback', () => {
+			const transport = new Transport({ logger: { error: () => {} } });
+			const spy = sinon.spy(async () => {
+				throw new Error('This is a test error.');
+			});
+			const spy2 = sinon.spy(transport.logger, 'error');
+			return transport.addMessageListener('bob', spy)
+				.then((handler) => handler({ test: true }))
+				.then((handler) => {
+					throw new Error('Failed to throw an error');
+				})
+				.catch((err) => {
+					if (err.message !== 'Failed to throw an error') {
+						spy2.calledOnce.should.be.true();
+						return;
+					}
+					throw err;
+				});
+		});
 	});
 
 	describe('_recordTiming:', () => {
