@@ -44,6 +44,13 @@
 				</ul>
 			</li>
 			
+			<li class="dropdown">
+				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-lib_transport-Transport.html#event:disconnected">lib/transport~Transport#event:disconnected</a></li><li><a href="module-lib_transport-Transport.html#event:reconnected">lib/transport~Transport#event:reconnected</a></li>
+				</ul>
+			</li>
+			
 		</ul>
         
             <div class="col-sm-3 col-md-3">
@@ -552,7 +559,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="addMessageListener"><span class="type-signature">&lt;async> </span>addMessageListener(routingKey, callback)</h4>
+    <h4 class="name" id="addMessageListener"><span class="type-signature"></span>addMessageListener(routingKey, callback [, options])</h4>
     
     
 </dt>
@@ -583,6 +590,8 @@
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
         
 
@@ -609,6 +618,14 @@
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -633,10 +650,52 @@
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
             <td class="description last">The function to call when a new message is received.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Optional params for configuring the handler.</td>
         </tr>
 
     
@@ -699,10 +758,6 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
-    Returns the wrapped callback handler for the message.
-</div>
-
 
 
 <dl>
@@ -728,7 +783,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="connect"><span class="type-signature">&lt;async> </span>connect()</h4>
+    <h4 class="name" id="connect"><span class="type-signature"></span>connect()</h4>
     
     
 </dt>
@@ -798,6 +853,26 @@
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -806,7 +881,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="disconnect"><span class="type-signature">&lt;async> </span>disconnect()</h4>
+    <h4 class="name" id="disconnect"><span class="type-signature"></span>disconnect()</h4>
     
     
 </dt>
@@ -876,6 +951,26 @@
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -884,7 +979,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="listen"><span class="type-signature">&lt;async> </span>listen()</h4>
+    <h4 class="name" id="listen"><span class="type-signature"></span>listen()</h4>
     
     
 </dt>
@@ -954,6 +1049,26 @@
     
 
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -962,7 +1077,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="publish"><span class="type-signature">&lt;async> </span>publish(routingKey [, message] [, options])</h4>
+    <h4 class="name" id="publish"><span class="type-signature"></span>publish(routingKey [, message] [, options])</h4>
     
     
 </dt>
@@ -1259,10 +1374,6 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
-    Returns a Promise that resolves when the message has been sent.
-</div>
-
 
 
 <dl>
@@ -1288,7 +1399,155 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="request"><span class="type-signature">&lt;async> </span>request(routingKey [, message] [, options])</h4>
+    <h4 class="name" id="removeMessageListener"><span class="type-signature"></span>removeMessageListener(routingKey)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Deletes a message handler.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>routingKey</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The routing key of the handler to remove.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="request"><span class="type-signature"></span>request(routingKey [, message] [, options])</h4>
     
     
 </dt>
@@ -1585,10 +1844,6 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
-    Returns a promise that resolves when the message has been sent and a response has been received.
-</div>
-
 
 
 <dl>
@@ -1737,10 +1992,6 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
-    The routingKey parameter.
-</div>
-
 
 
 <dl>
@@ -1767,6 +2018,178 @@
 
     
 
+    
+        <h3 class="subsection-title">Events</h3>
+
+        <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id="event:disconnected">disconnected</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fired when the transport is disconnected unexpectedly.
+    </div>
+    
+
+    
+
+    
+        <h5>Type: 
+<span class="param-type">object</span>
+
+
+</h5>
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="event:reconnected">reconnected</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fired when the transport is able to reconnect.
+    </div>
+    
+
+    
+
+    
+        <h5>Type: 
+<span class="param-type">object</span>
+
+
+</h5>
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
     
 </article>
 
@@ -1812,7 +2235,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
 	
-		on 2018-05-17T08:23:36-04:00
+		on 2018-01-25T15:07:21-05:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

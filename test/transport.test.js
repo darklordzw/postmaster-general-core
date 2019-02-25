@@ -1,9 +1,10 @@
-/* eslint import/no-unassigned-import: 'off' */
+﻿/* eslint import/no-unassigned-import: 'off' */
 /* eslint no-unused-vars: 'off' */
 'use strict';
 
 const chai = require('chai');
 const dirtyChai = require('dirty-chai');
+const Promise = require('bluebird');
 const sinon = require('sinon');
 const Transport = require('../lib/transport');
 const defaults = require('../defaults.json');
@@ -13,7 +14,7 @@ initialize their respective assertion properties. The "use()" functions
 load plugins into Chai. "dirtyChai" just allows assertion properties to
 use function call syntax ("calledOnce()" vs "calledOnce"). It makes them more
 acceptable to the linter. */
-const { expect } = chai;
+const expect = chai.expect;
 chai.should();
 chai.use(dirtyChai);
 
@@ -31,11 +32,11 @@ describe('transport:', () => {
 	describe('constructor:', () => {
 		it('should properly initialize settings from defaults', () => {
 			const transport = new Transport();
-			transport._timingsResetInterval.should.equal(defaults.timingsResetInterval);
+			transport.timingsResetInterval.should.equal(defaults.timingsResetInterval);
 		});
 		it('should properly initialize settings from input', () => {
 			const transport = new Transport({ timingsResetInterval: 100 });
-			transport._timingsResetInterval.should.equal(100);
+			transport.timingsResetInterval.should.equal(100);
 		});
 		it('should error on invalid input', () => {
 			try {
@@ -61,7 +62,7 @@ describe('transport:', () => {
 		});
 		it('should cleanup resources', () => {
 			const transport = new Transport();
-			transport._listening = true;
+			transport.listening = true;
 			return transport.disconnect()
 				.then(() => {
 					transport.listening.should.be.false();
@@ -89,11 +90,15 @@ describe('transport:', () => {
 	describe('addMessageListener:', () => {
 		it('should return a promise that resolves', () => {
 			const transport = new Transport();
-			return transport.addMessageListener('bob', async () => {});
+			return transport.addMessageListener('bob', () => {
+				return Promise.resolve();
+			});
 		});
 		it('should catch invalid routingKey params', () => {
 			const transport = new Transport();
-			return transport.addMessageListener(44444, async () => {})
+			return transport.addMessageListener(44444, () => {
+				return Promise.resolve();
+			})
 				.then(() => {
 					throw new Error('Failed to catch invalid input.');
 				})
@@ -117,16 +122,18 @@ describe('transport:', () => {
 		});
 		it('should register a callback with appropriate params', () => {
 			const transport = new Transport();
-			const spy = sinon.spy(async () => {});
-			const spy2 = sinon.spy(transport, '_recordTiming');
+			const spy = sinon.spy(() => {
+				return Promise.resolve();
+			});
+			const spy2 = sinon.spy(transport, 'recordTiming');
 			return transport.addMessageListener('bob', spy)
 				.then((handler) => handler({ test: true }))
 				.then((handler) => {
 					spy.calledOnce.should.be.true();
 					spy.calledWith({ test: true }).should.be.true();
 					spy2.calledOnce.should.be.true();
-					spy.resetHistory();
-					spy2.resetHistory();
+					spy.reset();
+					spy2.reset();
 				})
 				.then(() => transport.addMessageListener('bob2', spy))
 				.then((handler) => handler({ test: true, correlationId: 'ggg', initiator: 'fff' }))
@@ -136,32 +143,13 @@ describe('transport:', () => {
 					spy.calledWith({ test: true, correlationId: 'ggg', initiator: 'fff' }).should.be.true();
 				});
 		});
-		it('should automatically log any errors within the callback', () => {
-			const transport = new Transport({ logger: { error: () => {} } });
-			const spy = sinon.spy(async () => {
-				throw new Error('This is a test error.');
-			});
-			const spy2 = sinon.spy(transport.logger, 'error');
-			return transport.addMessageListener('bob', spy)
-				.then((handler) => handler({ test: true }))
-				.then((handler) => {
-					throw new Error('Failed to throw an error');
-				})
-				.catch((err) => {
-					if (err.message !== 'Failed to throw an error') {
-						spy2.calledOnce.should.be.true();
-						return;
-					}
-					throw err;
-				});
-		});
 	});
 
-	describe('_recordTiming:', () => {
+	describe('recordTiming:', () => {
 		it('should catch invalid topic input', () => {
 			try {
 				const transport = new Transport();
-				transport._recordTiming(3353553, new Date().getTime());
+				transport.recordTiming(3353553, new Date().getTime());
 			} catch (err) {
 				return;
 			}
@@ -170,7 +158,7 @@ describe('transport:', () => {
 		it('should catch invalid start input', () => {
 			try {
 				const transport = new Transport();
-				transport._recordTiming('bob', 'invalid');
+				transport.recordTiming('bob', 'invalid');
 			} catch (err) {
 				return;
 			}
@@ -178,7 +166,7 @@ describe('transport:', () => {
 		});
 		it('should calculate the timing stats', () => {
 			const transport = new Transport();
-			transport._recordTiming('bob', new Date().getTime());
+			transport.recordTiming('bob', new Date().getTime());
 			expect(transport.timings.bob).to.exist();
 			transport.timings.bob.messageCount.should.equal(1);
 			transport.timings.bob.minElapsedTime.should.equal(transport.timings.bob.elapsedTime);
@@ -186,15 +174,50 @@ describe('transport:', () => {
 		});
 	});
 
-	describe('_resetTimings:', () => {
+	describe('resetTimings:', () => {
 		it('should reset the timings', () => {
 			const transport = new Transport();
-			return transport.addMessageListener('bob', async () => {})
-				.then(() => transport._recordTiming('bob', new Date().getTime()))
+			return transport.addMessageListener('bob', () => {
+				return Promise.resolve();
+			})
+				.then(() => transport.recordTiming('bob', new Date().getTime()))
 				.then(() => {
 					expect(transport.timings.bob).to.exist();
 				})
-				.then(() => transport._resetTimings())
+				.then(() => transport.resetTimings())
+				.then(() => {
+					expect(transport.timings.bob).to.not.exist();
+				});
+		});
+	});
+
+	describe('removeMessageListener:', () => {
+		it('should return a promise that resolves', () => {
+			const transport = new Transport();
+			return transport.removeMessageListener('bob');
+		});
+		it('should catch invalid routingKey params', () => {
+			const transport = new Transport();
+			return transport.removeMessageListener(35353535)
+				.then(() => {
+					throw new Error('Failed to catch invalid input.');
+				})
+				.catch((err) => {
+					if (!(err instanceof TypeError)) {
+						throw err;
+					}
+				});
+		});
+		it('should remove timing data for the listener', () => {
+			const transport = new Transport();
+			return transport.addMessageListener('bob', () => {
+				return Promise.resolve();
+			})
+				.then(() => transport.recordTiming('bob', new Date().getTime()))
+				.then(() => {
+					expect(transport.timings.bob).to.exist();
+				})
+				.then(() => transport.removeMessageListener('bob'))
 				.then(() => {
 					expect(transport.timings.bob).to.not.exist();
 				});
