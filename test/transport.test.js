@@ -14,7 +14,7 @@ initialize their respective assertion properties. The "use()" functions
 load plugins into Chai. "dirtyChai" just allows assertion properties to
 use function call syntax ("calledOnce()" vs "calledOnce"). It makes them more
 acceptable to the linter. */
-const expect = chai.expect;
+const { expect } = chai;
 chai.should();
 chai.use(dirtyChai);
 
@@ -132,8 +132,8 @@ describe('transport:', () => {
 					spy.calledOnce.should.be.true();
 					spy.calledWith({ test: true }).should.be.true();
 					spy2.calledOnce.should.be.true();
-					spy.reset();
-					spy2.reset();
+					spy.resetHistory();
+					spy2.resetHistory();
 				})
 				.then(() => transport.addMessageListener('bob2', spy))
 				.then((handler) => handler({ test: true, correlationId: 'ggg', initiator: 'fff' }))
