@@ -1,6 +1,6 @@
 {
   "name": "postmaster-general-core",
-  "version": "0.0.12",
+  "version": "1.0.1",
   "description": "Core modules for the postmaster-general microservice library.",
   "author": "Ben Whatley",
   "repository": {
